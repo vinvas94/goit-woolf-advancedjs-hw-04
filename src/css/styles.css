@@ -1,25 +1,58 @@
-/**
-  |============================
-  | include css partials with
-  | default @import url()
-  |============================
-*/
-@import url('./reset.css');
-@import url('./vite-promo.css');
-@import url('./header.css');
+.search-form {
+  background-color: rgb(18, 73, 161);
+  display: flex;
+  justify-content: center;
+  height: 40px;
+  align-items: center;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  margin-bottom: 10px;
+}
 
-:root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
+.search-form button {
+  display: flex;
+  height: 32px;
+  align-items: center;
+  border-radius: 4px;
+}
 
-  color: #242424;
-  background-color: rgba(255, 255, 255, 0.87);
+input {
+  margin-right: 16px;
+  height: 32px;
+  border-radius: 4px;
+}
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
+.decor {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: 20px;
+  row-gap: 16px;
+}
+
+.decor img {
+  width: 300px;
+  display: block;
+  height: 300px;
+  object-fit: cover;
+  justify-content: space-between;
+}
+
+.load-more {
+  display: block;
+  margin: 0 auto;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.gallery_link {
+  margin: auto;
+  margin-bottom: 10px;
+  border: none;
+  overflow: hidden;
+}
+
+.hide {
+  display: none;
 }

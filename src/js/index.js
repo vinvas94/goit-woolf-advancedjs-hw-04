@@ -61,9 +61,20 @@ function createMarkup(arr) {
 
 refs.form.addEventListener('submit', onSearch);
 
-function onSearch(evt) {
+async function fetchData(query, page, perPage) {
+  try {
+    const data = await getImages(query, page, perPage);
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+async function onSearch(evt) {
   evt.preventDefault();
 
+  refs.buttonLoad.classList.add('hide');
   page = 1;
   refs.list.innerHTML = '';
   query = evt.currentTarget.searchQuery.value.trim();
@@ -78,34 +89,37 @@ function onSearch(evt) {
     return;
   }
 
-  getImages(query, page, perPage)
-    .then(data => {
-      if (data.hits.length * page === data.totalHits) {
-        refs.buttonLoad.classList.add('hide');
-      } else {
-        refs.buttonLoad.classList.remove('hide');
-      }
-      if (data.totalHits === 0) {
-        iziToast.error({
-          title: 'Hey',
-          message:
-            'Sorry, there are no images matching your search query. Please try again.',
-          position: 'topRight',
-        });
-      } else {
-        createMarkup(data.hits);
-        simpleLightboxList();
-        iziToast.success({
-          title: 'OK',
-          message: `Hooray! We found ${data.totalHits} images.`,
-          position: 'topRight',
-        });
-      }
-    })
-    .catch(error => {
-      console.log(error);
-    })
-    .finally(() => refs.form.reset());
+  try {
+    const data = await fetchData(query, page, perPage);
+
+    if (data.hits.length * page === data.totalHits) {
+      refs.buttonLoad.classList.add('hide');
+    } else {
+      refs.buttonLoad.classList.remove('hide');
+    }
+
+    if (data.totalHits === 0) {
+      iziToast.error({
+        title: 'Hey',
+        message:
+          'Sorry, there are no images matching your search query. Please try again.',
+        position: 'topRight',
+      });
+    } else {
+      createMarkup(data.hits);
+      refs.buttonLoad.classList.remove('hide');
+      simpleLightboxList();
+      iziToast.success({
+        title: 'OK',
+        message: `Hooray! We found ${data.totalHits} images.`,
+        position: 'topRight',
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  } finally {
+    refs.form.reset();
+  }
 }
 
 function simpleLightboxList() {
@@ -122,22 +136,23 @@ function simpleLightboxList() {
 
 refs.buttonLoad.addEventListener('click', onButtonLoad);
 
-function onButtonLoad() {
+async function onButtonLoad() {
   page += 1;
-  getImages(query, page, perPage)
-    .then(data => {
-      if (perPage * page >= data.totalHits) {
-        refs.buttonLoad.classList.add('hide');
-        iziToast.warning({
-          title: 'Hey',
-          message: "We're sorry, but you've reached the end of search results.",
-          position: 'topRight',
-        });
-      }
-      createMarkup(data.hits);
-      simpleLightboxList();
-    })
-    .catch(error => console.log(error));
+  try {
+    const data = await fetchData(query, page, perPage);
+    if (perPage * page >= data.totalHits) {
+      refs.buttonLoad.classList.add('hide');
+      iziToast.warning({
+        title: 'Hey',
+        message: "We're sorry, but you've reached the end of search results.",
+        position: 'topRight',
+      });
+    }
+    createMarkup(data.hits);
+    simpleLightboxList();
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 // window.addEventListener('scroll', onScroll);
